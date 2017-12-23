@@ -1,5 +1,9 @@
+package pingpongtest3;
 
-package pingpongtest2;
+/**
+ *
+ * @author arman
+ */
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
@@ -16,7 +20,9 @@ public class OnePlayer extends JPanel implements ActionListener, KeyListener {
 	private int height, width;
 	private Timer timer = new Timer(5, this);
 	private boolean first;
-	
+	boolean gameStarted = false;
+        
+        
 	private HashSet<String> keys = new HashSet<String>();
 	
 	private final int SPEED = 3;
@@ -24,7 +30,7 @@ public class OnePlayer extends JPanel implements ActionListener, KeyListener {
 	private int bottomPadX, topPadX;
 	private int inset = 10;
 	
-	private double ballX, ballY, velX = 2, velY = 2, ballSize = 30;
+	private double ballX, ballY, velX = 3.5, velY = 3.5, ballSize = 30;
 
 	private int scoreTop, scoreBottom;
 	
@@ -54,25 +60,48 @@ public class OnePlayer extends JPanel implements ActionListener, KeyListener {
                 
                 
 		Rectangle2D bottomPad = new Rectangle(bottomPadX, height - heightpad - inset, widthpad, heightpad);
-		pong2D.setColor(new Color(255, 255, 255));
+		pong2D.setColor(Color.blue);
 		pong2D.fill(bottomPad);
 		
 		Rectangle2D topPad = new Rectangle(topPadX, inset, widthpad, heightpad);
-		pong2D.setColor(new Color(255, 255, 255));
+		pong2D.setColor(Color.red);
 		pong2D.fill(topPad);
 		
 		Ellipse2D ball = new Ellipse2D.Double(ballX, ballY, ballSize, ballSize);
-		pong2D.setColor(new Color(255, 255, 255));
+		pong2D.setColor(Color.white);
 		pong2D.fill(ball);
 		
+                if (!gameStarted){
+                   g.setColor(Color.white);
+                   g.drawString("• V.S computer Mode •", 190, 100);
+                   g.drawString("⁍ Your Paddle is Blue", 180, 130);
+                   g.drawString("⁍ PRESS 'Space' to Begin the game..", 180, 160);
+                }
+            
+            
 		String scoreB = "You: " + new Integer(scoreBottom).toString();
-		String scoreT = new Integer(scoreTop).toString() + " :Computer";
+		String scoreT = new Integer(scoreTop).toString() + ": A.I.";
 		pong2D.drawString(scoreB, 10, height / 2);
 		pong2D.drawString(scoreT, width - 50, height / 2);
-	}
-	
+                
+                
+                if(scoreTop == 3){
+                    g.setColor(Color.red);
+                    g.drawString("A.I. WINS!", height / 2, width / 2);
+                    gameStarted = false;
+            
+                 }else if (scoreBottom == 3){
+                     g.setColor(Color.blue);
+                      g.drawString("You WINS!", height / 2, width / 2);
+                      gameStarted = false;
+
+                    }
+                  
+        }
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
+            if (gameStarted){
 		if (ballX < 0 || ballX > width - ballSize) {
 			velX = -velX;
 		}
@@ -113,9 +142,10 @@ public class OnePlayer extends JPanel implements ActionListener, KeyListener {
 		else if (delta < 0) {
 			topPadX -= (topPadX > 0) ? SPEED : 0;
 		}
-		
 		repaint();
-	}
+            }
+        }
+           
 
 	@Override
 	public void keyTyped(KeyEvent e) {}
@@ -130,9 +160,12 @@ public class OnePlayer extends JPanel implements ActionListener, KeyListener {
 		case KeyEvent.VK_RIGHT:
 			keys.add("RIGHT");
 			break;
-		}
-	}
+                case KeyEvent.VK_SPACE:
+                        gameStarted = true;                        
 
+                }
+        }
+        
 	@Override
 	public void keyReleased(KeyEvent e) {
 		int code = e.getKeyCode();

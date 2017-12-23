@@ -1,5 +1,9 @@
+package pingpongtest3;
 
-package pingpongtest2;
+/**
+ *
+ * @author arman
+ */
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
@@ -16,6 +20,8 @@ public class TwoPlayer extends JPanel implements ActionListener, KeyListener {
 	private int height, width;
 	private Timer timer = new Timer(5, this);
 	private boolean first;
+        boolean gameStarted = false;
+        
 	
 	private HashSet<String> keys = new HashSet<String>();
 	
@@ -53,25 +59,44 @@ public class TwoPlayer extends JPanel implements ActionListener, KeyListener {
 		}
 		
 		Rectangle2D bottomPad = new Rectangle(bottomPadX, height - heightpad - inset, widthpad, heightpad);
-		pong2D.setColor(new Color(255, 255, 255));
+		pong2D.setColor(Color.blue);
 		pong2D.fill(bottomPad);
 		
 		Rectangle2D topPad = new Rectangle(topPadX, inset, widthpad, heightpad);
-		pong2D.setColor(new Color(255, 255, 255));
+		pong2D.setColor(Color.red);
 		pong2D.fill(topPad);
+                
+                if (!gameStarted){
+                    g.setColor(Color.white);
+                    g.drawString("• TWO Player Mode •", 190, 100);
+                    g.drawString("⁍ Your Paddle is Blue", 180, 130);
+                    g.drawString("⁍ PRESS 'Space' to Begin the game..", 180, 160);
+                }
 		
 		Ellipse2D ball = new Ellipse2D.Double(ballX, ballY, ballSize, ballSize);
-		pong2D.setColor(new Color(255, 255, 255));
+		pong2D.setColor(Color.white);
 		pong2D.fill(ball);
 		
 		String scoreB = "Bottom: " + new Integer(scoreBottom).toString();
 		String scoreT = new Integer(scoreTop).toString() + " :Top";
 		pong2D.drawString(scoreB, 10, height / 2);
 		pong2D.drawString(scoreT, width - 50, height / 2);
+                
+                if(scoreTop == 3){
+                    g.setColor(Color.red);
+                    g.drawString("Top Player WINS!" , height / 2, width / 2);
+                    gameStarted = false;
+            
+                 }else if (scoreBottom == 3){
+                     g.setColor(Color.blue);
+                      g.drawString("Bottom Player WINS!", height / 2, width / 2);
+                      gameStarted = false;
+                 }
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+            if(gameStarted){
 		if (ballX < 0 || ballX > width - ballSize) {
 			velX = -velX;
 		}
@@ -115,8 +140,8 @@ public class TwoPlayer extends JPanel implements ActionListener, KeyListener {
 		
 		
 		repaint();
-	}
-
+            }
+        }
 
         @Override
 	public void keyTyped(KeyEvent e) {}
@@ -137,7 +162,9 @@ public class TwoPlayer extends JPanel implements ActionListener, KeyListener {
 			break;  
                 case KeyEvent.VK_D:
 			keys.add("D");
-			break;           
+			break;  
+                case KeyEvent.VK_SPACE:
+                        gameStarted = true; 
 		}
 	}
 
